@@ -5,6 +5,9 @@ game.GameOverScreen = me.ScreenObject.extend({
     },
 
     onResetEvent: function() {
+        if (typeof mobile !== 'undefined') {
+          mobile.gameOver(game.data.steps)
+        }
         //save section
         this.savedData = {
             score: game.data.score,
