@@ -5,9 +5,9 @@ game.GameOverScreen = me.ScreenObject.extend({
     },
 
     onResetEvent: function() {
-        if (typeof mobile !== 'undefined') {
-          mobile.gameOver(game.data.steps)
-        }
+        var device = this.getParameterByName('device');
+        if (device) this.executeOnDevice(device, game.data.steps);
+
         //save section
         this.savedData = {
             score: game.data.score,
@@ -109,5 +109,44 @@ game.GameOverScreen = me.ScreenObject.extend({
         this.ground2 = null;
         this.font = null;
         me.audio.stop("theme");
+    },
+
+    getParameterByName: function (name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    },
+
+    executeOnDevice: function (device, score) {
+        switch (device) {
+            case 'android':
+                this.executeOnAndroid(score);
+                break;
+            case 'ios':
+                this.executeOnIOS(score);
+                break;
+            default:
+                break;
+        }
+    },
+
+    executeOnAndroid: function (score) {
+        try {
+          mobile.gameOver(score)
+        } catch (err) {
+          console.log("The android context does not exist")
+        }
+    },
+
+    executeOnIOS: function (score) {
+        try {
+          webkit.messageHandlers.callbackHandler.gameOver(score)
+        } catch (err) {
+          console.log("The ios context does not exist")
+        }
     }
 });
