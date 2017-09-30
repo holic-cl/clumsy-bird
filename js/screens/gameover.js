@@ -144,7 +144,7 @@ game.GameOverScreen = me.ScreenObject.extend({
 
     executeOnIOS: function (score) {
         try {
-          webkit.messageHandlers.callbackHandler.gameOver(score)
+          window.webkit.messageHandlers.gameOver.postMessage(score)
         } catch (err) {
           console.log("The ios context does not exist")
         }
